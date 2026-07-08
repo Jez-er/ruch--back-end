@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TrainingType {
+  RUNNING
+  SWIMMING
+  CYCLING
+  GYM
+  STRETCHING
+  YOGA
+}
+
+model Training {
+  id       Int          @id @default(autoincrement())
+  type     TrainingType
+  duration Int
+  calories Int
+  date     DateTime
+
+  exercises Exercise[]
+}
+
+model Exercise {
+  id Int @id @default(autoincrement())
+
+  trainingId Int
+  training   Training @relation(fields: [trainingId], references: [id])
+
+  name String
+
+  sets ExerciseSet[]
+  laps ExerciseLap[]
+}
+
+model ExerciseSet {
+  id Int @id @default(autoincrement())
+
+  exerciseId Int
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+
+  reps     Int
+  approach Int
+  weight   Float?
+}
+
+model ExerciseLap {
+  id Int @id @default(autoincrement())
+
+  exerciseId Int
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+
+  lapNumber Int
+  duration  Int
+  distance  Float?
+}
